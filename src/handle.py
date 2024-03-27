@@ -4,16 +4,20 @@
 #
 
 import os
+import re
+
 import requests
 from pytube import YouTube
 
-def download_video(video_id, output_path="."):
+def download_video(video_id, output_path="unknown"):
     try:
-        youtube_url = f"https://www.youtube.com/watch?v={video_id}"
-        yt = YouTube(youtube_url)
-        stream = yt.streams.get_highest_resolution()  # Baixa a versão com a maior resolução disponível
+        #youtube_url = f"https://www.youtube.com/watch?v={video_id}"
+        # TODO: test
+        print(f"youtube_url = {video_id}")
+        yt = YouTube(video_id)
+        stream = yt.streams.get_highest_resolution()  # Download in highest resolution
 
-        # Verifica se o diretório de saída existe, senão cria
+        # If not exist, create the directory
         if not os.path.exists(output_path):
             os.makedirs(output_path)
 
@@ -23,50 +27,70 @@ def download_video(video_id, output_path="."):
         else:
             print(f" - Não foi possível encontrar stream para o vídeo")
     except Exception as e:
-        print(f" - Erro ao baixar o vídeo: {str(e)}")
+        print(f" - Erro ao baixar: {str(e)}")
 
-def get_playlist_items(api_key, playlist_id, max_results=50):
-    base_url = 'https://www.googleapis.com/youtube/v3/playlistItems'
-    params = {
-        'part': 'snippet',
-        'playlistId': playlist_id,
-        'maxResults': max_results,
-        'key': api_key,
+
+
+# TODO: future
+def download_mp3(video_id, url):
+    print(f"Doing...")
+
+
+# TODO: check to correct filter for URLs:
+#  - https://youtube.com/watch?v=ykjtZMKPV1k
+#  - https://youtu.be/S0Wse2hlgpQ?si=hAjD0777TwHVXLVT&t=5
+#  - https://youtu.be/9bZkp7q19f0
+#  - https://youtube.com/playlist?list=PLCVTqBt-FMLRyp37E9B5yLj_-QvTPHYcb&si=d1xqE3wZ5srVBIL6
+#  - https://www.youtube.com/watch?v=ZpiKeXnGEEo&list=PLCVTqBt-FMLRyp37E9B5yLj_-QvTPHYcb&index=1&pp=iAQB
+def define_uri(url):
+
+    if "watch?v=" in url:
+        pattern = r"watch\?v=([^&]+)"
+    elif "&" in url:
+        pattern = r"(.+?)&"
+    else:
+        return url
+
+    pattern = r"/([^/?]+)"
+
+    # return video id
+    return re.search(pattern, url).group(1)
+
+
+def file_type(url, type="video"):
+
+    #video_id = define_uri(url)
+
+    download_options = {
+        'video': download_video(url, download_type),
+        'mp3': download_mp3
     }
 
-    playlist_items = []
+    download_options.get(type)
 
-    next_page_token = None
-    while True:
-        if next_page_token:
-            params['pageToken'] = next_page_token
 
-        response = requests.get(base_url, params=params)
-        data = response.json()
 
-        if 'items' in data:
-            playlist_items.extend(data['items'])
 
-        next_page_token = data.get('nextPageToken')
-
-        if not next_page_token:
-            break
-
-    return playlist_items
 
 if __name__ == "__main__":
     import sys
 
-    if len(sys.argv) != 3:
-        print("Usage: python3", os.path.basename(__file__), "<API_KEY> <PLAYLIST_ID>")
+    if len(sys.argv) < 2:
+        print("Usage: python3", os.path.basename(__file__), "<DOWNLOAD_TYPE> <URL> [QUALITY]")
         sys.exit(1)
 
-    api_key = sys.argv[1]
-    playlist_id = sys.argv[2]
+    download_type = sys.argv[1]
+    url = sys.argv[2]
 
-    # Quantidade máxima de resultados por página
-    max_results_per_page = 200
+    # TODO: to resolv, check arg[3]
+    #if not sys.argv[3] == None:
+    #    quality = sys.argv[3]
 
+    # download_type = [video]/[mp3]
+    file_type(url, download_type)
+
+
+'''
     playlist_items = get_playlist_items(api_key, playlist_id, max_results_per_page)
 
     if playlist_items:
@@ -75,6 +99,7 @@ if __name__ == "__main__":
             video_id = snippet['resourceId']['videoId']
             video_title = snippet['title']
             print(f"Video ID: {video_id}, Title: {video_title}", end='')
-            download_video(video_id, playlist_id)
+            download_video(video_id, download_type)
     else:
         print("Nenhum vídeo encontrado na playlist.")
+'''
