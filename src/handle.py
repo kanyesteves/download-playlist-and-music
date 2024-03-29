@@ -1,8 +1,8 @@
 import os
-import re
 from pytube import YouTube
+# import re
 
-ROOT_OUTPUT_PATH = f"{os.getcwd()}/downloads"
+ROOT_OUTPUT_PATH = f"{os.getcwd()}/downloads"  # get dir root os.getcwd()
 
 
 def download_video(video_id, output_path=f"{ROOT_OUTPUT_PATH}/unknown"):
@@ -12,7 +12,6 @@ def download_video(video_id, output_path=f"{ROOT_OUTPUT_PATH}/unknown"):
         stream = yt.streams.get_highest_resolution()  # Download in highest resolution
 
         # If not exist, create the directory
-        # get dir root = os.getcwd()
         if not os.path.exists(f"{ROOT_OUTPUT_PATH}/{output_path}"):
             os.makedirs(f"{ROOT_OUTPUT_PATH}/{output_path}")
 
@@ -38,6 +37,7 @@ def download_mp3(video_id, url):
 #  - https://youtube.com/playlist?list=PLCVTqBt-FMLRyp37E9B5yLj_-QvTPHYcb&si=d1xqE3wZ5srVBIL6
 #  # ENTREVISTA COM O EMPRESÁRIO - video 1 da Playlist Páginas Azuis
 #  - https://www.youtube.com/watch?v=ZpiKeXnGEEo&list=PLCVTqBt-FMLRyp37E9B5yLj_-QvTPHYcb&index=1&pp=iAQB
+'''
 def define_uri(url):
     if "watch?v=" in url:
         pattern = r"watch\?v=([^&]+)"
@@ -50,8 +50,10 @@ def define_uri(url):
 
     # return video id
     return re.search(pattern, url).group(1)
+'''
 
 
+# needed to handling playlist URL
 def file_type(url, type="video"):
     # video_id = define_uri(url)
 
@@ -80,7 +82,8 @@ if __name__ == "__main__":
 
     # download_type = [video]/[mp3]
     file_type(url, download_type)
-    # file_type(f"{url}", download_type)s
+    # file_type(f"{url}", download_type)
+
 
 '''
     playlist_items = get_playlist_items(api_key, playlist_id, max_results_per_page)
