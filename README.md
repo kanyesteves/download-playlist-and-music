@@ -40,5 +40,5 @@ Certifique-se de ter python instalado na sua maquina. O passo a passo que voce v
 
         $ cd src/ && streamlit run download_musics.py
 
-### Daqui pra frente e com voces !!
+### Daqui pra frente e com voces !! 
 
