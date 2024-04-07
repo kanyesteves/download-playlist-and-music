@@ -13,7 +13,7 @@ tab1, tab2 = st.tabs(["Vídeo", "Playlist"])
 
 with tab1:
     url = st.text_input(label="Link para download do vídeo", placeholder="https://www.youtube.com/watch?v=3KtWfp0UopM")
-    col1, col2 = st.columns([0.11,1])
+    col1, col2 = st.columns([0.13,1])
     col1.download_button(label="Download Video", data=f"{st}", file_name='requirements.txt')
     btn_convert = col2.button("Download MP3", disabled=True)
 
